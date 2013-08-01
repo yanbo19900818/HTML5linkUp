@@ -18,7 +18,7 @@ for(i=0;i<640/80/2;i++)
 {
 for(j=0;j<960/60;j++)
 {
-var data=random(-4,9);
+var data=random(-1,9);
 gameData[i][j]=data;
 dataPool[poolSize++]=data;
 }
@@ -46,7 +46,7 @@ for(x=0;x<640/80;x++)
 for(y=0;y<960/60;y++)
 {
 var type=gameData[x][y];
-if(type>=0)
+if(type!=-1)
 ctx.drawImage(imgArray[type],y*60,x*80);
 else 
 continue;
@@ -79,7 +79,7 @@ for(i=1;i<=10;i++)
 {
 var img=new Image(); 
 img.src=i+".jpg"; 
-imgArray[i-1]=img;
+imgArray[i]=img;
 }
 </script>
 
