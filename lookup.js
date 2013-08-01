@@ -44,6 +44,7 @@ var gameData = new Array();
 var direct = 0; //1代表上，2代表下，3代表左，4代表右
 var turnNum = 0;
 var pathArray = new Array();
+var  checkPathFlag=false;
 function init() {
     c = document.getElementById("myCanvas");
     ctx = c.getContext("2d");
@@ -80,6 +81,7 @@ var pauseFlag=false;
             if (gameData[firstRow][firstCol] == gameData[secondRow][secondCol]) {
                 console.debug("两次点击的是同一张图片,开始检查路径是否在三次拐弯内");
                 if (checkPath(firstCol, firstRow, secondCol, secondRow)) {
+				checkPathFlag=false;
 				//drawPath(firstCol,firstRow);
 				    drawBorder(secondCol,secondRow);
 					pauseFlag=true;
@@ -97,59 +99,63 @@ var pauseFlag=false;
 		else
 		state=0;
     }
-	if(pauseFlag)
-	{
-	Pause(this,300);    
- this.NextStep=function(){  	
+ 	
     drawCanvas();
-	}
-	}
-	else  drawCanvas();
 }
 //检验路径，是否在三次拐弯内，true代表在三次拐弯内，false代表不在三次拐弯内
 function checkPath(firstCol, firstRow, secondCol, secondRow) {
-    if (firstCol == secondCol && firstRow == secondRow) return true;
-    if (turnNum > 2) return false;
+if(firstCol<0||firstRow<0||firstCol>960/60||firstRow>640/80)return false;
+    if (firstCol == secondCol && firstRow == secondRow)
+{
+checkPathFlag=true;	
+return true;
+}
+    if (turnNum > 3) return false;
 
     if (secondRow == firstRow + 1 && secondCol == firstCol) {
         pathArray.push(2);
+		checkPathFlag=true;
         return true;
     }
     if (secondRow == firstRow - 1 && secondCol == firstCol) {
         pathArray.push(1);
+		checkPathFlag=true;
         return true;
     }
     if (secondCol == firstCol - 1 && secondRow == firstRow) {
         pathArray.push(3);
+		checkPathFlag=true;
         return true;
     }
     if (secondCol == firstCol + 1 && secondRow == firstRow) {
         pathArray.push(4);
+		checkPathFlag=true;
         return true;
     }
 
     //向上
-    if (secondRow < firstRow && firstRow != 0 && gameData[firstRow - 1][firstCol] <= 0) {
-        //console.debug("向上，下一格为:"+ gameData[firstRow - 1][firstCol]);
+    if (!checkPathFlag&&secondRow < firstRow && firstRow != 0 && gameData[firstRow - 1][firstCol] <= 0) {
+        console.debug("向上，下一格为:"+ gameData[firstRow - 1][firstCol]);
         pathArray.push(1);
         direct = 1;
         if (direct != 1 && direct != 0) turnNum++;
-        if (checkPath(firstCol, firstRow - 1, secondCol, secondRow)) return true;
+        if (checkPath(firstCol, firstRow - 1, secondCol, secondRow))
+{checkPathFlag=true;		return true;}
         else {
             if (direct != 1) {
                 turnNum--;
                 direct = 1;
             }
         }
-
     }
+
     //向下
-    if (secondRow > firstRow && firstRow < (640 / 80 - 1) && gameData[firstRow + 1][firstCol] <= 0) {
+    if (!checkPathFlag&&secondRow > firstRow && firstRow < (640 / 80 - 1) && gameData[firstRow + 1][firstCol] <= 0) {
         console.debug("向下,下一格为:" + gameData[firstRow + 1][firstCol]);
         pathArray.push(2);
         direct = 2;
         if (direct != 2 && direct != 0) turnNum++;
-        if (checkPath(firstCol, firstRow + 1, secondCol, secondRow)) return true;
+        if (checkPath(firstCol, firstRow + 1, secondCol, secondRow)) {checkPathFlag=true;return true;}
         else {
             if (direct != 2) {
                 turnNum--;
@@ -158,12 +164,12 @@ function checkPath(firstCol, firstRow, secondCol, secondRow) {
         }
     }
     //往左
-    if (secondCol < firstCol && firstCol != 0 && gameData[firstRow][firstCol - 1] <= 0) {
+    if (!checkPathFlag&&secondCol < firstCol && firstCol != 0 && gameData[firstRow][firstCol - 1] <= 0) {
         console.debug("向左,下一格为:" + gameData[firstRow][firstCol - 1]);
         pathArray.push(3);
         direct = 3;
         if (direct != 3 && direct != 0) turnNum++;
-        if (checkPath(firstCol - 1, firstRow, secondCol, secondRow)) return true;
+        if (checkPath(firstCol - 1, firstRow, secondCol, secondRow)) {checkPathFlag=true;return true;}
         else {
             if (direct != 3) {
                 turnNum--;
@@ -173,12 +179,12 @@ function checkPath(firstCol, firstRow, secondCol, secondRow) {
     }
 
     //往右
-    if (secondCol > firstCol && firstCol < (960 / 60 - 1) && gameData[firstRow][firstCol + 1] <= 0) {
+    if (!checkPathFlag&&secondCol > firstCol && firstCol < (960 / 60 - 1) && gameData[firstRow][firstCol + 1] <= 0) {
         console.debug("向右,下一格为:" + gameData[firstRow][firstCol + 1]);
         pathArray.push(4);
         direct = 4;
         if (direct != 4 && direct != 0) turnNum++;
-        if (checkPath(firstCol + 1, firstRow, secondCol, secondRow)) return true;
+        if (checkPath(firstCol + 1, firstRow, secondCol, secondRow)){checkPathFlag=true; return true;}
         else {
             if (direct != 4) {
                 turnNum--;
@@ -192,17 +198,19 @@ function checkPath(firstCol, firstRow, secondCol, secondRow) {
 function genGameData() {
     var dataPool = new Array();
     var poolSize = 0;
-    for (i = 1; i < 640 / 80 / 2; i++) {
+	var num1=0;
+    for (i = 0; i < 640 / 80 / 2; i++) {
         for (j = 0; j < 960 / 60; j++) {
-            var data = random( - 2, 9);
+            var data = random( - 9, 9);
             gameData[i][j] = data;
             dataPool[poolSize++] = data;
-        }
+        num1++;
+		}
     }
     dataPool.sort(randomsort);
-    for (i = 640 / 80 / 2; i < 640 / 80-1; i++) for (j = 0; j < 960 / 60; j++) {
-        gameData[i][j] = dataPool[poolSize--];
-    }
+    for (i = 640 / 80 / 2; i < 640 / 80; i++) for (j = 0; j < 960 / 60; j++) {
+        gameData[i][j] = dataPool[--poolSize];
+	}
 }
 function startGame() {
     genGameData();
