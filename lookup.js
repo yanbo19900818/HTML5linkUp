@@ -4,6 +4,34 @@ function randomsort(a, b) {
 function random(min, max) {
     return Math.floor(min + Math.random() * (max - min));
 } //生成范围内随机数
+
+
+function Pause(obj,iMinSecond){      
+   if (window.eventList==null) window.eventList=new Array();      
+   var ind=-1;      
+   for (var i=0;i<window.eventList.length;i++){      
+       if (window.eventList[i]==null) {      
+         window.eventList[i]=obj;      
+         ind=i;      
+         break;      
+        }      
+    }      
+   if (ind==-1){      
+   ind=window.eventList.length;      
+   window.eventList[ind]=obj;      
+   }      
+  setTimeout("GoOn(" + ind + ")",iMinSecond);      
+}      
+
+
+function GoOn(ind){      
+  var obj=window.eventList[ind];      
+  window.eventList[ind]=null;      
+  if (obj.NextStep) obj.NextStep();      
+  else obj();      
+}    
+
+
 var firstCol = -1;
 var firstRow = -1;
 var secondCol = -1;
@@ -32,6 +60,7 @@ function init() {
 }
 
 function clickOnCanvas(event) {
+var pauseFlag=false;
     var x = event.offsetX;
     var y = event.offsetY;
     if (x == null) x = event.layerX;
@@ -50,25 +79,37 @@ function clickOnCanvas(event) {
             state = 0;
             if (gameData[firstRow][firstCol] == gameData[secondRow][secondCol]) {
                 console.debug("两次点击的是同一张图片,开始检查路径是否在三次拐弯内");
-
                 if (checkPath(firstCol, firstRow, secondCol, secondRow)) {
+				//drawPath(firstCol,firstRow);
+				    drawBorder(secondCol,secondRow);
+					pauseFlag=true;
                     console.debug("路径为：" + pathArray);
                     pathArray = new Array();
-
                     gameData[firstRow][firstCol] = -1;
                     gameData[secondRow][secondCol] = -1;
                 }
             } else {
                 console.debug("两次点击不是同一张图片，进行处理");
+				 drawBorder(secondCol,secondRow);
+				state=0;
             }
         }
+		else
+		state=0;
     }
+	if(pauseFlag)
+	{
+	Pause(this,300);    
+ this.NextStep=function(){  	
     drawCanvas();
+	}
+	}
+	else  drawCanvas();
 }
 //检验路径，是否在三次拐弯内，true代表在三次拐弯内，false代表不在三次拐弯内
 function checkPath(firstCol, firstRow, secondCol, secondRow) {
     if (firstCol == secondCol && firstRow == secondRow) return true;
-    if (turnNum > 3) return false;
+    if (turnNum > 2) return false;
 
     if (secondRow == firstRow + 1 && secondCol == firstCol) {
         pathArray.push(2);
@@ -152,15 +193,14 @@ function genGameData() {
     var dataPool = new Array();
     var poolSize = 0;
     for (i = 1; i < 640 / 80 / 2; i++) {
-        for (j = 1; j < 960 / 60; j++) {
+        for (j = 0; j < 960 / 60; j++) {
             var data = random( - 2, 9);
             gameData[i][j] = data;
             dataPool[poolSize++] = data;
         }
     }
-    poolSize--;
     dataPool.sort(randomsort);
-    for (i = 640 / 80 / 2; i < 640 / 80; i++) for (j = 0; j < 960 / 60; j++) {
+    for (i = 640 / 80 / 2; i < 640 / 80-1; i++) for (j = 0; j < 960 / 60; j++) {
         gameData[i][j] = dataPool[poolSize--];
     }
 }
@@ -176,5 +216,28 @@ function drawCanvas() {
         if (type >= 0) ctx.drawImage(imgArray[type], y * 60, x * 80);
         else continue;
     }
-
+if(state==1)
+{
+if(gameData[firstRow][firstCol]>0)
+drawBorder(firstCol,firstRow);
 }
+}
+
+function drawBorder(col,row)
+{
+var x=col*60;
+var y=row*80;
+var width=60;
+var height=80;
+ctx.beginPath();
+ctx.lineWidth="2";
+ctx.strokeStyle="red"; // 红色路径
+ctx.moveTo(x,y);
+ctx.lineTo(x+width,y);
+ctx.lineTo(x+width,y+height);
+ctx.lineTo(x,y+height);
+ctx.lineTo(x,y);
+ctx.stroke(); // 进行绘制
+}
+
+
