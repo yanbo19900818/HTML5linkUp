@@ -1,9 +1,9 @@
-function randomsort(a, b) {
-    return Math.random() > 0.5 ? -1 : 1; //ÓÃMath.random()º¯ÊıÉú³É0~1Ö®¼äµÄËæ»úÊıÓë0.5±È½Ï£¬·µ»Ø-1»ò1
+ï»¿function randomsort(a, b) {
+    return Math.random() > 0.5 ? -1 : 1; //ç”¨Math.random()å‡½æ•°ç”Ÿæˆ0~1ä¹‹é—´çš„éšæœºæ•°ä¸0.5æ¯”è¾ƒï¼Œè¿”å›-1æˆ–1
 }
 function random(min, max) {
     return Math.floor(min + Math.random() * (max - min));
-} //Éú³É·¶Î§ÄÚËæ»úÊı
+} //ç”ŸæˆèŒƒå›´å†…éšæœºæ•°
 
 
 function Pause(obj,iMinSecond){      
@@ -36,12 +36,12 @@ var firstCol = -1;
 var firstRow = -1;
 var secondCol = -1;
 var secondRow = -1;
-var state = 0; //0ÎªÃ»Ñ¡ÖĞ£¬1ÎªÑ¡ÖĞÒ»ÕÅ¡£
+var state = 0; //0ä¸ºæ²¡é€‰ä¸­ï¼Œ1ä¸ºé€‰ä¸­ä¸€å¼ ã€‚
 var c;
 var ctx;
 var imgArray = new Array();
 var gameData = new Array();
-var direct = 0; //1´ú±íÉÏ£¬2´ú±íÏÂ£¬3´ú±í×ó£¬4´ú±íÓÒ
+var direct = 0; //1ä»£è¡¨ä¸Šï¼Œ2ä»£è¡¨ä¸‹ï¼Œ3ä»£è¡¨å·¦ï¼Œ4ä»£è¡¨å³
 var turnNum = 0;
 var pathArray = new Array();
 var  checkPathFlag=false;
@@ -52,7 +52,7 @@ function init() {
         gameData[i] = new Array();
         for (j = 0; j < 960 / 60; j++) gameData[i][j] = -1;
     }
-    //³õÊ¼»¯ÓÎÏ·Êı¾İ
+    //åˆå§‹åŒ–æ¸¸æˆæ•°æ®
     for (i = 1; i <= 10; i++) {
         var img = new Image();
         img.src = i + ".jpg";
@@ -68,7 +68,7 @@ var pauseFlag=false;
     if (y == null) y = event.layerY;
     var colNum = Math.ceil(x / 60) - 1;
     var rowNum = Math.ceil(y / 80) - 1;
-    console.debug("X ×ø±ê: " + x + ", Y ×ø±ê: " + y + " ÁĞÊı: " + colNum + " ĞĞÊı: " + rowNum);
+    console.debug("X åæ ‡: " + x + ", Y åæ ‡: " + y + " åˆ—æ•°: " + colNum + " è¡Œæ•°: " + rowNum);
     if (state == 0) {
         firstCol = colNum;
         firstRow = rowNum;
@@ -79,19 +79,18 @@ var pauseFlag=false;
             secondRow = rowNum;
             state = 0;
             if (gameData[firstRow][firstCol] == gameData[secondRow][secondCol]) {
-                console.debug("Á½´Îµã»÷µÄÊÇÍ¬Ò»ÕÅÍ¼Æ¬,¿ªÊ¼¼ì²éÂ·¾¶ÊÇ·ñÔÚÈı´Î¹ÕÍäÄÚ");
+                console.debug("ä¸¤æ¬¡ç‚¹å‡»çš„æ˜¯åŒä¸€å¼ å›¾ç‰‡,å¼€å§‹æ£€æŸ¥è·¯å¾„æ˜¯å¦åœ¨ä¸‰æ¬¡æ‹å¼¯å†…");
                 if (checkPath(firstCol, firstRow, secondCol, secondRow)) {
 				checkPathFlag=false;
 				//drawPath(firstCol,firstRow);
 				    drawBorder(secondCol,secondRow);
-					pauseFlag=true;
-                    console.debug("Â·¾¶Îª£º" + pathArray);
+					pauseFlag=true;        
+                    console.debug("è·¯å¾„ä¸ºï¼š" + pathArray);
                     pathArray = new Array();
                     gameData[firstRow][firstCol] = -1;
                     gameData[secondRow][secondCol] = -1;
                 }
             } else {
-                console.debug("Á½´Îµã»÷²»ÊÇÍ¬Ò»ÕÅÍ¼Æ¬£¬½øĞĞ´¦Àí");
 				 drawBorder(secondCol,secondRow);
 				state=0;
             }
@@ -102,7 +101,7 @@ var pauseFlag=false;
  	
     drawCanvas();
 }
-//¼ìÑéÂ·¾¶£¬ÊÇ·ñÔÚÈı´Î¹ÕÍäÄÚ£¬true´ú±íÔÚÈı´Î¹ÕÍäÄÚ£¬false´ú±í²»ÔÚÈı´Î¹ÕÍäÄÚ
+//æ£€éªŒè·¯å¾„ï¼Œæ˜¯å¦åœ¨ä¸‰æ¬¡æ‹å¼¯å†…ï¼Œtrueä»£è¡¨åœ¨ä¸‰æ¬¡æ‹å¼¯å†…ï¼Œfalseä»£è¡¨ä¸åœ¨ä¸‰æ¬¡æ‹å¼¯å†…
 function checkPath(firstCol, firstRow, secondCol, secondRow) {
 if(firstCol<0||firstRow<0||firstCol>960/60||firstRow>640/80)return false;
     if (firstCol == secondCol && firstRow == secondRow)
@@ -133,9 +132,9 @@ return true;
         return true;
     }
 
-    //ÏòÉÏ
+    //å‘ä¸Š
     if (!checkPathFlag&&secondRow < firstRow && firstRow != 0 && gameData[firstRow - 1][firstCol] <= 0) {
-        console.debug("ÏòÉÏ£¬ÏÂÒ»¸ñÎª:"+ gameData[firstRow - 1][firstCol]);
+        console.debug("å‘ä¸Šï¼Œä¸‹ä¸€æ ¼ä¸º:"+ gameData[firstRow - 1][firstCol]);
         pathArray.push(1);
         direct = 1;
         if (direct != 1 && direct != 0) turnNum++;
@@ -149,9 +148,9 @@ return true;
         }
     }
 
-    //ÏòÏÂ
+    //å‘ä¸‹
     if (!checkPathFlag&&secondRow > firstRow && firstRow < (640 / 80 - 1) && gameData[firstRow + 1][firstCol] <= 0) {
-        console.debug("ÏòÏÂ,ÏÂÒ»¸ñÎª:" + gameData[firstRow + 1][firstCol]);
+        console.debug("å‘ä¸‹,ä¸‹ä¸€æ ¼ä¸º:" + gameData[firstRow + 1][firstCol]);
         pathArray.push(2);
         direct = 2;
         if (direct != 2 && direct != 0) turnNum++;
@@ -163,9 +162,9 @@ return true;
             }
         }
     }
-    //Íù×ó
+    //å¾€å·¦
     if (!checkPathFlag&&secondCol < firstCol && firstCol != 0 && gameData[firstRow][firstCol - 1] <= 0) {
-        console.debug("Ïò×ó,ÏÂÒ»¸ñÎª:" + gameData[firstRow][firstCol - 1]);
+        console.debug("å‘å·¦,ä¸‹ä¸€æ ¼ä¸º:" + gameData[firstRow][firstCol - 1]);
         pathArray.push(3);
         direct = 3;
         if (direct != 3 && direct != 0) turnNum++;
@@ -178,9 +177,9 @@ return true;
         }
     }
 
-    //ÍùÓÒ
+    //å¾€å³
     if (!checkPathFlag&&secondCol > firstCol && firstCol < (960 / 60 - 1) && gameData[firstRow][firstCol + 1] <= 0) {
-        console.debug("ÏòÓÒ,ÏÂÒ»¸ñÎª:" + gameData[firstRow][firstCol + 1]);
+        console.debug("å‘å³,ä¸‹ä¸€æ ¼ä¸º:" + gameData[firstRow][firstCol + 1]);
         pathArray.push(4);
         direct = 4;
         if (direct != 4 && direct != 0) turnNum++;
@@ -229,6 +228,21 @@ if(state==1)
 if(gameData[firstRow][firstCol]>0)
 drawBorder(firstCol,firstRow);
 }
+if(checkSuccess())
+{
+alert("æ­å–œä½ æ¶ˆç­äº†æ— æ•°177ï¼ŒæˆåŠŸæŠ±å¾—177æœ¬ä½“å½’ï¼ï¼ï¼");
+}
+
+}
+
+
+function checkSuccess()
+{
+ for (i = 0; i < 640 / 80 ; i++) 
+        for (j = 0; j < 960 / 60; j++) {
+		if(gameData[i][j]>0)return false;
+		}
+	return true;
 }
 
 function drawBorder(col,row)
@@ -239,13 +253,13 @@ var width=60;
 var height=80;
 ctx.beginPath();
 ctx.lineWidth="2";
-ctx.strokeStyle="red"; // ºìÉ«Â·¾¶
+ctx.strokeStyle="red"; // çº¢è‰²è·¯å¾„
 ctx.moveTo(x,y);
 ctx.lineTo(x+width,y);
 ctx.lineTo(x+width,y+height);
 ctx.lineTo(x,y+height);
 ctx.lineTo(x,y);
-ctx.stroke(); // ½øĞĞ»æÖÆ
+ctx.stroke(); // è¿›è¡Œç»˜åˆ¶
 }
 
 
